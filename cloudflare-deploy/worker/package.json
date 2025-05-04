@@ -1,0 +1,21 @@
+{
+  "name": "firemail-worker",
+  "version": "1.0.0",
+  "description": "花火邮箱助手全 Cloudflare Worker API",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "publish": "wrangler publish",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "nanoid": "^3.3.6"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.6",
+    "wrangler": "^3.19.0"
+  },
+  "author": "",
+  "license": "MIT"
+} 

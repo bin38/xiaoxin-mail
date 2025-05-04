@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  firemail:
+    build: .
+    image: luofengyuan/firemail:latest
+    container_name: firemail
+    restart: unless-stopped
+    ports:
+      - "80:80"  # 只暴露一个端口，通过Caddy进行反向代理
+    volumes:
+      - ./backend/data:/app/backend/data
+    environment:
+      - TZ=Asia/Shanghai
+      - HOST=0.0.0.0
+      - FLASK_PORT=5000  # 后端服务器端口
+      - WS_PORT=8765     # WebSocket服务器端口
+      - JWT_SECRET_KEY=huohuo_email_secret_key
+      # 数据库配置
+      - DB_TYPE=sqlite   # sqlite 或 mysql
+      # MySQL配置 (如果使用MySQL，取消下面的注释)
+      #- MYSQL_HOST=mysql
+      #- MYSQL_PORT=3306
+      #- MYSQL_USER=firemail
+      #- MYSQL_PASSWORD=your_password_here
+      #- MYSQL_DATABASE=firemail
+      # WebDAV配置 (如果需要WebDAV同步，取消下面的注释)
+      #- WEBDAV_ENABLED=true
+      #- WEBDAV_URL=https://your-webdav-server.com/remote.php/dav/files/username/
+      #- WEBDAV_USERNAME=your_username
+      #- WEBDAV_PASSWORD=your_password
+      #- WEBDAV_ROOT_PATH=/firemail/
+      #- WEBDAV_DB_NAME=firemail.db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    # 如果使用MySQL，取消下面的注释，添加依赖关系
+    #depends_on:
+    #  - mysql
+
+  # MySQL数据库服务 (如果使用MySQL，取消下面的注释)
+  #mysql:
+  #  image: mysql:8.0
+  #  container_name: firemail-mysql
+  #  restart: unless-stopped
+  #  environment:
+  #    - MYSQL_ROOT_PASSWORD=root_password_here
+  #    - MYSQL_DATABASE=firemail
+  #    - MYSQL_USER=firemail
+  #    - MYSQL_PASSWORD=your_password_here
+  #  volumes:
+  #    - mysql_data:/var/lib/mysql
+  #  command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+  #  healthcheck:
+  #    test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "firemail", "-pyour_password_here"]
+  #    interval: 5s
+  #    timeout: 5s
+  #    retries: 10
+
+#volumes:
+#  mysql_data: 
